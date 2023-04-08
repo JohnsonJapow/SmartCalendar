@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+
+
+option java_multiple_files = true;
+
+option java_package = "SpendingTracker_GRPC";
+
+option java_outer_classname = "SmartServiceImpl";
+
+
+
+package extra_smart;
+
+
+
+service SpendingTracker {
+
+rpc RecordTransaction (stream TransactionRequest) returns (stream TransactionResponse) {}
+
+}
+
+
+message TransactionRequest {
+
+float income = 1;
+
+float spending = 2;
+
+}
+
+
+
+message TransactionResponse {
+
+float balance = 1;
+
+repeated TransactionRecord records = 2;
+
+}
+
+
+
+message TransactionRecord {
+
+float income = 1;
+
+float spending = 2;
+
+float balance = 3;
+
+}
