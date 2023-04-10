@@ -1,1 +1,4 @@
+/META-INF/
 /EventManager_GRPC/
+/ScheduleOptimizer_GRPC/
+/SpendingTracker_GRPC/
