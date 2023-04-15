@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+
+
+option java_multiple_files = true;
+
+option java_package = "ScheduleOptimizer_GRPC";
+
+option java_outer_classname = "SmartServiceImpl";
+
+
+
+package extra_smart;
+
+service ScheduleOptimizer {
+
+rpc SetChallenge (Goal) returns (GoalResponse) {}
+
+
+}
+
+message Goal {
+
+float ideal_balance = 1;
+
+int64 end_date = 2;
+
+}
+
+
+
+message GoalResponse {
+
+bool success = 1;
+
+string message = 2;
+
+}
