@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import EventManager_GRPC.EventManagerGrpc;
+
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
@@ -24,6 +25,7 @@ public class EventManagerClient {
 		
 		addEvent();
 		modifyEvent();
+		listEvent();
 		try {
 			channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
@@ -88,6 +90,36 @@ public class EventManagerClient {
 			
 		}
 
+	}
+	public static void listEvent() {
+		DateRange request = DateRange.newBuilder().setStartDate(0).setEndDate(0).build();
+		
+		StreamObserver<Event> responseObserver=new StreamObserver<Event>() {
+			int count=0;
+			@Override
+			public void onNext(Event value) {
+				System.out.println("receiving messages " + value);
+				count += 1;
+			}
+
+			@Override
+			public void onError(Throwable t) {
+				t.printStackTrace();
+
+			}
+
+			@Override
+			public void onCompleted() {
+				System.out.println("stream is completed ... received "+ count+ " messages");
+			}
+		};
+		asyncStub.listEvents(request, responseObserver);
+		try {
+			Thread.sleep(30000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
@@ -150,65 +151,6 @@ public class EventManagerServer extends EventManagerImplBase {
 	                responseObserver.onNext(EventResponse.newBuilder().setSuccess(false).setMessage(message).build());
 	            }
 	        }
-			
-				/*
-		        @Override
-		        public void onNext(EventModificationRequest request2) {
-		            EventResponse response;
-		            String eventId = request2.getId();
-				   	if(!Files.exists(Paths.get(eventPath))) {
-			            
-		                response = EventResponse.newBuilder()
-		                        .setSuccess(false)
-		                        .setMessage("Event not found")
-		                        .build();
-			            responseObserver.onNext(response);
-				   	}
-				   	LinkedList<String> check=readEventFromFile();
-				   	if(!isDuplicate(request2.getId(),check)) {
-			            
-		                response = EventResponse.newBuilder()
-		                        .setSuccess(false)
-		                        .setMessage("Event not found")
-		                        .build();
-			            responseObserver.onNext(response);
-				   	}
-
-				   	else {
-				   		String line =request2.getId()+","+request2.getName()+","+request2.getDescription()+","+Long.toString(request2.getDate());
-				   		//System.out.println(request.getId()+","+request.getName()+","+request.getDescription()+","+request.getReminder()+","+request.getDate());
-				   		System.out.println(line);
-				   		for(int i=0;i<check.size();i++) {
-				   			String event = check.get(i);
-				   			String[] eventData=event.split(",");
-				   			if(eventData[0].equals(eventId)) {
-				   				check.set(i, request2.getId()+",");
-				   				check.set(i+1, request2.getName()+",");
-				   				check.set(i+2, request2.getDescription()+",");
-				   				check.set(i+3, Long.toString(request2.getDate()));
-				   				System.out.println("This iso "+check.get(i));
-				   				break;
-				   			}
-				   		}
-			        	try (BufferedWriter writer = new BufferedWriter(new FileWriter(eventPath))) {
-			                for(int i=0;i<check.size();i++) {
-			                	writer.write(check.get(i));
-			                }
-			                
-			                String message = String.format("Event with ID %s has been modified successfully", request2.getId());
-			                responseObserver.onNext(EventResponse.newBuilder().setSuccess(true).setMessage(message).build());
-			        	}
-			        	catch(IOException e) {
-			        		e.printStackTrace();
-			        	}
-		                // Return success response
-		                response = EventResponse.newBuilder()
-		                        .setSuccess(true)
-		                        .setMessage("Event modified successfully")
-		                        .build();
-		            }
-		            responseObserver.onNext(response);
-		        }*/
 
 		        @Override
 		        public void onError(Throwable t) {
@@ -227,14 +169,19 @@ public class EventManagerServer extends EventManagerImplBase {
 	public void listEvents(DateRange request, StreamObserver<Event> responseObserver) {
 	    long startTime = request.getStartDate();
 	    long endTime = request.getEndDate();
-	    /*
-	    for (Event event : events) {
-	        long eventTime = event.getDate();
-	        if (eventTime >= startTime && eventTime <= endTime) {
-	            responseObserver.onNext(event);
-	        }
+	    
+	    LinkedList <String>dat=new LinkedList<>();
+	    dat=readEventFromFile();
+	    LinkedList <String> dd=new LinkedList<>();
+	    for(int i=3;i<dat.size();i+=4) {
+	    	
+	    	if(startTime<=Long.parseLong(dat.get(i))||endTime>=Long.parseLong(dat.get(i))) {
+	    		dd.add(dat.get(i-3)+","+dat.get(i-2)+","+dat.get(i-1)+","+dat.get(i));
+	    	    responseObserver.onNext(Event.newBuilder().setId(dat.get(i-3)).setName(dat.get(i-2)).setDescription(dat.get(i-1)).setDate(Long.parseLong(dat.get(i))).build());
+
+	    	}
 	    }
-	     */
+
 	    responseObserver.onCompleted();
 	}
 	
