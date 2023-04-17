@@ -38,11 +38,6 @@ public interface EventOrBuilder extends
       getDescriptionBytes();
 
   /**
-   * <code>int32 reminder = 4;</code>
-   */
-  int getReminder();
-
-  /**
    * <code>int64 date = 5;</code>
    */
   long getDate();

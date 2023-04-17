@@ -1,6 +1,7 @@
 package SpendingTracker_GRPC;
 
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import SpendingTracker_GRPC.SpendingTrackerGrpc;
@@ -25,7 +26,12 @@ public class SpendingTrackerClient {
 		
 		recordTransaction();
 		
-		channel.shutdown();
+		try {
+			channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	public static void recordTransaction() {

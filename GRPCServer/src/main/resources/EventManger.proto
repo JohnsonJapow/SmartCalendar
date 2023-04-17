@@ -30,8 +30,6 @@ string name = 2;
 
 string description = 3;
 
-int32 reminder = 4;
-
 int64 date = 5;
 
 }
@@ -40,7 +38,7 @@ int64 date = 5;
 
 message EventResponse {
 
-bool success = 1;
+bool success =1;
 
 string message = 2;
 
@@ -52,19 +50,14 @@ message EventModificationRequest {
 
 string id = 1;
 
-oneof action {
-
 string name = 2;
 
 string description = 3;
-
-int32 reminder = 5;
 
 int64 date = 6;
 
 }
 
-}
 
 
 

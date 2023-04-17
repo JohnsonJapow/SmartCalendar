@@ -38,14 +38,7 @@ public interface EventModificationRequestOrBuilder extends
       getDescriptionBytes();
 
   /**
-   * <code>int32 reminder = 5;</code>
-   */
-  int getReminder();
-
-  /**
    * <code>int64 date = 6;</code>
    */
   long getDate();
-
-  public EventManager_GRPC.EventModificationRequest.ActionCase getActionCase();
 }

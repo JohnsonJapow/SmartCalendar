@@ -17,6 +17,9 @@ private static final long serialVersionUID = 0L;
   }
   private EventModificationRequest() {
     id_ = "";
+    name_ = "";
+    description_ = "";
+    date_ = 0L;
   }
 
   @java.lang.Override
@@ -51,24 +54,19 @@ private static final long serialVersionUID = 0L;
           }
           case 18: {
             java.lang.String s = input.readStringRequireUtf8();
-            actionCase_ = 2;
-            action_ = s;
+
+            name_ = s;
             break;
           }
           case 26: {
             java.lang.String s = input.readStringRequireUtf8();
-            actionCase_ = 3;
-            action_ = s;
-            break;
-          }
-          case 40: {
-            actionCase_ = 5;
-            action_ = input.readInt32();
+
+            description_ = s;
             break;
           }
           case 48: {
-            actionCase_ = 6;
-            action_ = input.readInt64();
+
+            date_ = input.readInt64();
             break;
           }
           default: {
@@ -101,48 +99,6 @@ private static final long serialVersionUID = 0L;
     return EventManager_GRPC.SmartServiceImpl.internal_static_extra_smart_EventModificationRequest_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
             EventManager_GRPC.EventModificationRequest.class, EventManager_GRPC.EventModificationRequest.Builder.class);
-  }
-
-  private int actionCase_ = 0;
-  private java.lang.Object action_;
-  public enum ActionCase
-      implements com.google.protobuf.Internal.EnumLite {
-    NAME(2),
-    DESCRIPTION(3),
-    REMINDER(5),
-    DATE(6),
-    ACTION_NOT_SET(0);
-    private final int value;
-    private ActionCase(int value) {
-      this.value = value;
-    }
-    /**
-     * @deprecated Use {@link #forNumber(int)} instead.
-     */
-    @java.lang.Deprecated
-    public static ActionCase valueOf(int value) {
-      return forNumber(value);
-    }
-
-    public static ActionCase forNumber(int value) {
-      switch (value) {
-        case 2: return NAME;
-        case 3: return DESCRIPTION;
-        case 5: return REMINDER;
-        case 6: return DATE;
-        case 0: return ACTION_NOT_SET;
-        default: return null;
-      }
-    }
-    public int getNumber() {
-      return this.value;
-    }
-  };
-
-  public ActionCase
-  getActionCase() {
-    return ActionCase.forNumber(
-        actionCase_);
   }
 
   public static final int ID_FIELD_NUMBER = 1;
@@ -180,23 +136,19 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int NAME_FIELD_NUMBER = 2;
+  private volatile java.lang.Object name_;
   /**
    * <code>string name = 2;</code>
    */
   public java.lang.String getName() {
-    java.lang.Object ref = "";
-    if (actionCase_ == 2) {
-      ref = action_;
-    }
+    java.lang.Object ref = name_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      if (actionCase_ == 2) {
-        action_ = s;
-      }
+      name_ = s;
       return s;
     }
   }
@@ -205,17 +157,12 @@ private static final long serialVersionUID = 0L;
    */
   public com.google.protobuf.ByteString
       getNameBytes() {
-    java.lang.Object ref = "";
-    if (actionCase_ == 2) {
-      ref = action_;
-    }
+    java.lang.Object ref = name_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      if (actionCase_ == 2) {
-        action_ = b;
-      }
+      name_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
@@ -223,23 +170,19 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int DESCRIPTION_FIELD_NUMBER = 3;
+  private volatile java.lang.Object description_;
   /**
    * <code>string description = 3;</code>
    */
   public java.lang.String getDescription() {
-    java.lang.Object ref = "";
-    if (actionCase_ == 3) {
-      ref = action_;
-    }
+    java.lang.Object ref = description_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      if (actionCase_ == 3) {
-        action_ = s;
-      }
+      description_ = s;
       return s;
     }
   }
@@ -248,43 +191,25 @@ private static final long serialVersionUID = 0L;
    */
   public com.google.protobuf.ByteString
       getDescriptionBytes() {
-    java.lang.Object ref = "";
-    if (actionCase_ == 3) {
-      ref = action_;
-    }
+    java.lang.Object ref = description_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      if (actionCase_ == 3) {
-        action_ = b;
-      }
+      description_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
     }
   }
 
-  public static final int REMINDER_FIELD_NUMBER = 5;
-  /**
-   * <code>int32 reminder = 5;</code>
-   */
-  public int getReminder() {
-    if (actionCase_ == 5) {
-      return (java.lang.Integer) action_;
-    }
-    return 0;
-  }
-
   public static final int DATE_FIELD_NUMBER = 6;
+  private long date_;
   /**
    * <code>int64 date = 6;</code>
    */
   public long getDate() {
-    if (actionCase_ == 6) {
-      return (java.lang.Long) action_;
-    }
-    return 0L;
+    return date_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -304,19 +229,14 @@ private static final long serialVersionUID = 0L;
     if (!getIdBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, id_);
     }
-    if (actionCase_ == 2) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, action_);
+    if (!getNameBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, name_);
     }
-    if (actionCase_ == 3) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, action_);
+    if (!getDescriptionBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, description_);
     }
-    if (actionCase_ == 5) {
-      output.writeInt32(
-          5, (int)((java.lang.Integer) action_));
-    }
-    if (actionCase_ == 6) {
-      output.writeInt64(
-          6, (long)((java.lang.Long) action_));
+    if (date_ != 0L) {
+      output.writeInt64(6, date_);
     }
     unknownFields.writeTo(output);
   }
@@ -330,21 +250,15 @@ private static final long serialVersionUID = 0L;
     if (!getIdBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, id_);
     }
-    if (actionCase_ == 2) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, action_);
+    if (!getNameBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, name_);
     }
-    if (actionCase_ == 3) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, action_);
+    if (!getDescriptionBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, description_);
     }
-    if (actionCase_ == 5) {
+    if (date_ != 0L) {
       size += com.google.protobuf.CodedOutputStream
-        .computeInt32Size(
-            5, (int)((java.lang.Integer) action_));
-    }
-    if (actionCase_ == 6) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeInt64Size(
-            6, (long)((java.lang.Long) action_));
+        .computeInt64Size(6, date_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -364,29 +278,12 @@ private static final long serialVersionUID = 0L;
     boolean result = true;
     result = result && getId()
         .equals(other.getId());
-    result = result && getActionCase().equals(
-        other.getActionCase());
-    if (!result) return false;
-    switch (actionCase_) {
-      case 2:
-        result = result && getName()
-            .equals(other.getName());
-        break;
-      case 3:
-        result = result && getDescription()
-            .equals(other.getDescription());
-        break;
-      case 5:
-        result = result && (getReminder()
-            == other.getReminder());
-        break;
-      case 6:
-        result = result && (getDate()
-            == other.getDate());
-        break;
-      case 0:
-      default:
-    }
+    result = result && getName()
+        .equals(other.getName());
+    result = result && getDescription()
+        .equals(other.getDescription());
+    result = result && (getDate()
+        == other.getDate());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -400,27 +297,13 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + ID_FIELD_NUMBER;
     hash = (53 * hash) + getId().hashCode();
-    switch (actionCase_) {
-      case 2:
-        hash = (37 * hash) + NAME_FIELD_NUMBER;
-        hash = (53 * hash) + getName().hashCode();
-        break;
-      case 3:
-        hash = (37 * hash) + DESCRIPTION_FIELD_NUMBER;
-        hash = (53 * hash) + getDescription().hashCode();
-        break;
-      case 5:
-        hash = (37 * hash) + REMINDER_FIELD_NUMBER;
-        hash = (53 * hash) + getReminder();
-        break;
-      case 6:
-        hash = (37 * hash) + DATE_FIELD_NUMBER;
-        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-            getDate());
-        break;
-      case 0:
-      default:
-    }
+    hash = (37 * hash) + NAME_FIELD_NUMBER;
+    hash = (53 * hash) + getName().hashCode();
+    hash = (37 * hash) + DESCRIPTION_FIELD_NUMBER;
+    hash = (53 * hash) + getDescription().hashCode();
+    hash = (37 * hash) + DATE_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        getDate());
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -556,8 +439,12 @@ private static final long serialVersionUID = 0L;
       super.clear();
       id_ = "";
 
-      actionCase_ = 0;
-      action_ = null;
+      name_ = "";
+
+      description_ = "";
+
+      date_ = 0L;
+
       return this;
     }
 
@@ -585,19 +472,9 @@ private static final long serialVersionUID = 0L;
     public EventManager_GRPC.EventModificationRequest buildPartial() {
       EventManager_GRPC.EventModificationRequest result = new EventManager_GRPC.EventModificationRequest(this);
       result.id_ = id_;
-      if (actionCase_ == 2) {
-        result.action_ = action_;
-      }
-      if (actionCase_ == 3) {
-        result.action_ = action_;
-      }
-      if (actionCase_ == 5) {
-        result.action_ = action_;
-      }
-      if (actionCase_ == 6) {
-        result.action_ = action_;
-      }
-      result.actionCase_ = actionCase_;
+      result.name_ = name_;
+      result.description_ = description_;
+      result.date_ = date_;
       onBuilt();
       return result;
     }
@@ -650,30 +527,16 @@ private static final long serialVersionUID = 0L;
         id_ = other.id_;
         onChanged();
       }
-      switch (other.getActionCase()) {
-        case NAME: {
-          actionCase_ = 2;
-          action_ = other.action_;
-          onChanged();
-          break;
-        }
-        case DESCRIPTION: {
-          actionCase_ = 3;
-          action_ = other.action_;
-          onChanged();
-          break;
-        }
-        case REMINDER: {
-          setReminder(other.getReminder());
-          break;
-        }
-        case DATE: {
-          setDate(other.getDate());
-          break;
-        }
-        case ACTION_NOT_SET: {
-          break;
-        }
+      if (!other.getName().isEmpty()) {
+        name_ = other.name_;
+        onChanged();
+      }
+      if (!other.getDescription().isEmpty()) {
+        description_ = other.description_;
+        onChanged();
+      }
+      if (other.getDate() != 0L) {
+        setDate(other.getDate());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -703,21 +566,6 @@ private static final long serialVersionUID = 0L;
       }
       return this;
     }
-    private int actionCase_ = 0;
-    private java.lang.Object action_;
-    public ActionCase
-        getActionCase() {
-      return ActionCase.forNumber(
-          actionCase_);
-    }
-
-    public Builder clearAction() {
-      actionCase_ = 0;
-      action_ = null;
-      onChanged();
-      return this;
-    }
-
 
     private java.lang.Object id_ = "";
     /**
@@ -788,21 +636,17 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    private java.lang.Object name_ = "";
     /**
      * <code>string name = 2;</code>
      */
     public java.lang.String getName() {
-      java.lang.Object ref = "";
-      if (actionCase_ == 2) {
-        ref = action_;
-      }
+      java.lang.Object ref = name_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        if (actionCase_ == 2) {
-          action_ = s;
-        }
+        name_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
@@ -813,17 +657,12 @@ private static final long serialVersionUID = 0L;
      */
     public com.google.protobuf.ByteString
         getNameBytes() {
-      java.lang.Object ref = "";
-      if (actionCase_ == 2) {
-        ref = action_;
-      }
+      java.lang.Object ref = name_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        if (actionCase_ == 2) {
-          action_ = b;
-        }
+        name_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -837,8 +676,8 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
     throw new NullPointerException();
   }
-  actionCase_ = 2;
-      action_ = value;
+  
+      name_ = value;
       onChanged();
       return this;
     }
@@ -846,11 +685,9 @@ private static final long serialVersionUID = 0L;
      * <code>string name = 2;</code>
      */
     public Builder clearName() {
-      if (actionCase_ == 2) {
-        actionCase_ = 0;
-        action_ = null;
-        onChanged();
-      }
+      
+      name_ = getDefaultInstance().getName();
+      onChanged();
       return this;
     }
     /**
@@ -862,27 +699,23 @@ private static final long serialVersionUID = 0L;
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-      actionCase_ = 2;
-      action_ = value;
+      
+      name_ = value;
       onChanged();
       return this;
     }
 
+    private java.lang.Object description_ = "";
     /**
      * <code>string description = 3;</code>
      */
     public java.lang.String getDescription() {
-      java.lang.Object ref = "";
-      if (actionCase_ == 3) {
-        ref = action_;
-      }
+      java.lang.Object ref = description_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        if (actionCase_ == 3) {
-          action_ = s;
-        }
+        description_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
@@ -893,17 +726,12 @@ private static final long serialVersionUID = 0L;
      */
     public com.google.protobuf.ByteString
         getDescriptionBytes() {
-      java.lang.Object ref = "";
-      if (actionCase_ == 3) {
-        ref = action_;
-      }
+      java.lang.Object ref = description_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        if (actionCase_ == 3) {
-          action_ = b;
-        }
+        description_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -917,8 +745,8 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
     throw new NullPointerException();
   }
-  actionCase_ = 3;
-      action_ = value;
+  
+      description_ = value;
       onChanged();
       return this;
     }
@@ -926,11 +754,9 @@ private static final long serialVersionUID = 0L;
      * <code>string description = 3;</code>
      */
     public Builder clearDescription() {
-      if (actionCase_ == 3) {
-        actionCase_ = 0;
-        action_ = null;
-        onChanged();
-      }
+      
+      description_ = getDefaultInstance().getDescription();
+      onChanged();
       return this;
     }
     /**
@@ -942,57 +768,25 @@ private static final long serialVersionUID = 0L;
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-      actionCase_ = 3;
-      action_ = value;
+      
+      description_ = value;
       onChanged();
       return this;
     }
 
-    /**
-     * <code>int32 reminder = 5;</code>
-     */
-    public int getReminder() {
-      if (actionCase_ == 5) {
-        return (java.lang.Integer) action_;
-      }
-      return 0;
-    }
-    /**
-     * <code>int32 reminder = 5;</code>
-     */
-    public Builder setReminder(int value) {
-      actionCase_ = 5;
-      action_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>int32 reminder = 5;</code>
-     */
-    public Builder clearReminder() {
-      if (actionCase_ == 5) {
-        actionCase_ = 0;
-        action_ = null;
-        onChanged();
-      }
-      return this;
-    }
-
+    private long date_ ;
     /**
      * <code>int64 date = 6;</code>
      */
     public long getDate() {
-      if (actionCase_ == 6) {
-        return (java.lang.Long) action_;
-      }
-      return 0L;
+      return date_;
     }
     /**
      * <code>int64 date = 6;</code>
      */
     public Builder setDate(long value) {
-      actionCase_ = 6;
-      action_ = value;
+      
+      date_ = value;
       onChanged();
       return this;
     }
@@ -1000,11 +794,9 @@ private static final long serialVersionUID = 0L;
      * <code>int64 date = 6;</code>
      */
     public Builder clearDate() {
-      if (actionCase_ == 6) {
-        actionCase_ = 0;
-        action_ = null;
-        onChanged();
-      }
+      
+      date_ = 0L;
+      onChanged();
       return this;
     }
     @java.lang.Override

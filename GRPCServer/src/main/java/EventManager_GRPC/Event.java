@@ -19,7 +19,6 @@ private static final long serialVersionUID = 0L;
     id_ = "";
     name_ = "";
     description_ = "";
-    reminder_ = 0;
     date_ = 0L;
   }
 
@@ -63,11 +62,6 @@ private static final long serialVersionUID = 0L;
             java.lang.String s = input.readStringRequireUtf8();
 
             description_ = s;
-            break;
-          }
-          case 32: {
-
-            reminder_ = input.readInt32();
             break;
           }
           case 40: {
@@ -209,15 +203,6 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int REMINDER_FIELD_NUMBER = 4;
-  private int reminder_;
-  /**
-   * <code>int32 reminder = 4;</code>
-   */
-  public int getReminder() {
-    return reminder_;
-  }
-
   public static final int DATE_FIELD_NUMBER = 5;
   private long date_;
   /**
@@ -250,9 +235,6 @@ private static final long serialVersionUID = 0L;
     if (!getDescriptionBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 3, description_);
     }
-    if (reminder_ != 0) {
-      output.writeInt32(4, reminder_);
-    }
     if (date_ != 0L) {
       output.writeInt64(5, date_);
     }
@@ -273,10 +255,6 @@ private static final long serialVersionUID = 0L;
     }
     if (!getDescriptionBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, description_);
-    }
-    if (reminder_ != 0) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeInt32Size(4, reminder_);
     }
     if (date_ != 0L) {
       size += com.google.protobuf.CodedOutputStream
@@ -304,8 +282,6 @@ private static final long serialVersionUID = 0L;
         .equals(other.getName());
     result = result && getDescription()
         .equals(other.getDescription());
-    result = result && (getReminder()
-        == other.getReminder());
     result = result && (getDate()
         == other.getDate());
     result = result && unknownFields.equals(other.unknownFields);
@@ -325,8 +301,6 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getName().hashCode();
     hash = (37 * hash) + DESCRIPTION_FIELD_NUMBER;
     hash = (53 * hash) + getDescription().hashCode();
-    hash = (37 * hash) + REMINDER_FIELD_NUMBER;
-    hash = (53 * hash) + getReminder();
     hash = (37 * hash) + DATE_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
         getDate());
@@ -469,8 +443,6 @@ private static final long serialVersionUID = 0L;
 
       description_ = "";
 
-      reminder_ = 0;
-
       date_ = 0L;
 
       return this;
@@ -502,7 +474,6 @@ private static final long serialVersionUID = 0L;
       result.id_ = id_;
       result.name_ = name_;
       result.description_ = description_;
-      result.reminder_ = reminder_;
       result.date_ = date_;
       onBuilt();
       return result;
@@ -563,9 +534,6 @@ private static final long serialVersionUID = 0L;
       if (!other.getDescription().isEmpty()) {
         description_ = other.description_;
         onChanged();
-      }
-      if (other.getReminder() != 0) {
-        setReminder(other.getReminder());
       }
       if (other.getDate() != 0L) {
         setDate(other.getDate());
@@ -802,32 +770,6 @@ private static final long serialVersionUID = 0L;
   checkByteStringIsUtf8(value);
       
       description_ = value;
-      onChanged();
-      return this;
-    }
-
-    private int reminder_ ;
-    /**
-     * <code>int32 reminder = 4;</code>
-     */
-    public int getReminder() {
-      return reminder_;
-    }
-    /**
-     * <code>int32 reminder = 4;</code>
-     */
-    public Builder setReminder(int value) {
-      
-      reminder_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>int32 reminder = 4;</code>
-     */
-    public Builder clearReminder() {
-      
-      reminder_ = 0;
       onChanged();
       return this;
     }

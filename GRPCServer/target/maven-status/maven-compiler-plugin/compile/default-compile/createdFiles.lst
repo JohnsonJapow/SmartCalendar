@@ -9,11 +9,10 @@ SpendingTracker_GRPC\SpendingTrackerGrpc$SpendingTrackerBaseDescriptorSupplier.c
 EventManager_GRPC\EventResponse$Builder.class
 EventManager_GRPC\Event$1.class
 EventManager_GRPC\DateRange$Builder.class
-EventManager_GRPC\EventModificationRequest$ActionCase.class
 EventManager_GRPC\EventModificationRequest$Builder.class
 SpendingTracker_GRPC\SpendingTrackerGrpc$MethodHandlers.class
 ScheduleOptimizer_GRPC\GoalResponse.class
-EventManager_GRPC\EventModificationRequest$2.class
+SpendingTracker_GRPC\SpendingTrackerServer$1.class
 ScheduleOptimizer_GRPC\ScheduleOptimizerGrpc$ScheduleOptimizerFileDescriptorSupplier.class
 SpendingTracker_GRPC\SpendingTrackerGrpc.class
 EventManager_GRPC\SmartServiceImpl$1.class
@@ -30,6 +29,7 @@ ScheduleOptimizer_GRPC\GoalResponse$Builder.class
 ScheduleOptimizer_GRPC\SmartServiceImpl.class
 EventManager_GRPC\Event.class
 SpendingTracker_GRPC\SpendingTrackerGrpc$SpendingTrackerFutureStub.class
+SpendingTracker_GRPC\SpendingTrackerServer.class
 SpendingTracker_GRPC\TransactionResponse$1.class
 SpendingTracker_GRPC\TransactionResponseOrBuilder.class
 SpendingTracker_GRPC\SpendingTrackerGrpc$1.class
@@ -37,6 +37,7 @@ SpendingTracker_GRPC\TransactionRequestOrBuilder.class
 EventManager_GRPC\EventManagerGrpc$1.class
 ScheduleOptimizer_GRPC\ScheduleOptimizerGrpc$ScheduleOptimizerBlockingStub.class
 ScheduleOptimizer_GRPC\SmartServiceImpl$1.class
+SpendingTracker_GRPC\SpendingTrackerClient$1.class
 ScheduleOptimizer_GRPC\ScheduleOptimizerGrpc$ScheduleOptimizerBaseDescriptorSupplier.class
 EventManager_GRPC\EventManagerGrpc$EventManagerImplBase.class
 EventManager_GRPC\Event$Builder.class
@@ -52,6 +53,7 @@ SpendingTracker_GRPC\TransactionResponse.class
 EventManager_GRPC\EventManagerGrpc$EventManagerBaseDescriptorSupplier.class
 ScheduleOptimizer_GRPC\Goal$1.class
 ScheduleOptimizer_GRPC\ScheduleOptimizerGrpc$MethodHandlers.class
+SpendingTracker_GRPC\SpendingTrackerClient.class
 EventManager_GRPC\SmartServiceImpl.class
 ScheduleOptimizer_GRPC\Goal.class
 ScheduleOptimizer_GRPC\ScheduleOptimizerGrpc$1.class
