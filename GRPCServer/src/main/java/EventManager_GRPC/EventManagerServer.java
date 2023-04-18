@@ -37,6 +37,7 @@ public class EventManagerServer extends EventManagerImplBase {
 			} catch (InterruptedException | IOException e) {	
 				e.printStackTrace();
 			}
+			
 	}
 
 	private LinkedList mergeEvent(LinkedList splitList) {
@@ -175,13 +176,15 @@ public class EventManagerServer extends EventManagerImplBase {
 	    LinkedList <String> dd=new LinkedList<>();
 	    for(int i=3;i<dat.size();i+=4) {
 	    	
-	    	if(startTime<=Long.parseLong(dat.get(i))||endTime>=Long.parseLong(dat.get(i))) {
+	    	if(startTime<=Long.parseLong(dat.get(i))&&endTime>=Long.parseLong(dat.get(i))) {
 	    		dd.add(dat.get(i-3)+","+dat.get(i-2)+","+dat.get(i-1)+","+dat.get(i));
 	    	    responseObserver.onNext(Event.newBuilder().setId(dat.get(i-3)).setName(dat.get(i-2)).setDescription(dat.get(i-1)).setDate(Long.parseLong(dat.get(i))).build());
 
 	    	}
 	    }
-
+	    if(dd.isEmpty()) {
+	    	 responseObserver.onNext(Event.newBuilder().setId("not found").setName("not found").setDescription("not found").build());
+	    }
 	    responseObserver.onCompleted();
 	}
 	

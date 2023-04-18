@@ -17,8 +17,11 @@ public class SpendingTrackerClient {
 	private static SpendingTrackerGrpc.SpendingTrackerBlockingStub blockingStub;
 	// Asynch stub
 	private static SpendingTrackerGrpc.SpendingTrackerStub asyncStub;
+	
 	public static void main(String[] args)throws Exception {
-		// TODO Auto-generated method stub
+
+		int transactionsCounter;
+		
 		ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext().build();
 		
 		blockingStub=SpendingTrackerGrpc.newBlockingStub(channel);

@@ -23,8 +23,8 @@ public class EventManagerClient {
 		blockingStub=EventManagerGrpc.newBlockingStub(channel);
 		asyncStub=EventManagerGrpc.newStub(channel);
 		
-		addEvent();
-		modifyEvent();
+		//addEvent();
+		//modifyEvent();
 		listEvent();
 		try {
 			channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
@@ -92,7 +92,7 @@ public class EventManagerClient {
 
 	}
 	public static void listEvent() {
-		DateRange request = DateRange.newBuilder().setStartDate(0).setEndDate(0).build();
+		DateRange request = DateRange.newBuilder().setStartDate(0).setEndDate(1).build();
 		
 		StreamObserver<Event> responseObserver=new StreamObserver<Event>() {
 			int count=0;
