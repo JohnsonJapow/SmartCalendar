@@ -4,13 +4,13 @@ syntax = "proto3";
 
 option java_multiple_files = true;
 
-option java_package = "EventManager_GRPC";
+option java_package = "EventManagerGRPC";
 
 option java_outer_classname = "SmartServiceImpl";
 
 
 
-package extra_smart;
+package extrasmart;
 
 service EventManager {
 
