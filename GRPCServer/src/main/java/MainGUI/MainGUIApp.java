@@ -1,0 +1,281 @@
+package MainGUI;
+
+import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Random;
+
+import javax.jmdns.JmDNS;
+import javax.jmdns.ServiceEvent;
+import javax.jmdns.ServiceInfo;
+import javax.jmdns.ServiceListener;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+import EventManagerGRPC.EventManagerGrpc;
+import ScheduleOptimizerGRPC.Goal;
+import ScheduleOptimizerGRPC.GoalResponse;
+import ScheduleOptimizerGRPC.ScheduleOptimizerGrpc;
+import SpendingTrackerGRPC.SpendingTrackerGrpc;
+import SpendingTrackerGRPC.TransactionRequest;
+import SpendingTrackerGRPC.TransactionResponse;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import io.grpc.stub.StreamObserver;
+
+public class MainGUIApp {
+	private static ScheduleOptimizerGrpc.ScheduleOptimizerBlockingStub soblockingStub;
+	private static ScheduleOptimizerGrpc.ScheduleOptimizerStub soasyncStub;
+	private static EventManagerGrpc.EventManagerBlockingStub emblockingStub;
+	private static EventManagerGrpc.EventManagerStub emasyncStub;
+	private static SpendingTrackerGrpc.SpendingTrackerBlockingStub stblockingStub;
+	private static SpendingTrackerGrpc.SpendingTrackerStub stasyncStub;
+	
+	private ServiceInfo smartInfo;
+	private JFrame frame;
+	private JTextField textNumber1;
+	private JTextField textNumber2;
+	private JTextField textNumber3;
+	private JTextField textNumber4;
+	private JTextArea textResponse ;
+	
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					MainGUIApp window=new MainGUIApp();
+					window.frame.setVisible(true);
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+			}
+			
+			
+			
+		});
+
+	}
+	public MainGUIApp() {
+		String main_service_type="_main2._tcp.local.";
+		discoverServices(main_service_type);
+
+		String host=smartInfo.getHostAddresses()[0];
+		int port=smartInfo.getPort();
+		
+		ManagedChannel channel=ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
+		
+		stblockingStub = SpendingTrackerGrpc.newBlockingStub(channel);
+		stasyncStub= SpendingTrackerGrpc.newStub(channel);
+		soblockingStub = ScheduleOptimizerGrpc.newBlockingStub(channel);
+		soasyncStub = ScheduleOptimizerGrpc.newStub(channel);
+		initialize();
+	}
+
+	private void discoverServices(String service_type) {
+		
+		try {
+			JmDNS jmdns =JmDNS.create(InetAddress.getLocalHost());
+			
+			jmdns.addServiceListener(service_type, new ServiceListener() {
+
+				@Override
+				public void serviceAdded(ServiceEvent event) {
+					System.out.println("Smart Service added:  "+event.getInfo());
+					
+				}
+
+				@Override
+				public void serviceRemoved(ServiceEvent event) {
+					System.out.println("Smart Service removed:  "+event.getInfo());					
+				}
+
+				@Override
+				public void serviceResolved(ServiceEvent event) {
+					System.out.println("Smart Service resolved:  "+event.getInfo());
+					
+					smartInfo = event.getInfo();
+					
+					int port = smartInfo.getPort();
+					
+					System.out.println("resolving "+ service_type +" with properties ...");
+					System.out.println("\t port: "+ port);
+					System.out.println("\t type: "+ event.getType());
+					System.out.println("\t name: "+ event.getName());
+					System.out.println("\t description/properties: "+ smartInfo.getNiceTextString());
+					System.out.println("\t host: "+ smartInfo.getHostAddresses()[0]);
+				}
+				
+			});
+			
+			Thread.sleep(2000);
+			
+			jmdns.close();
+		}
+		catch (UnknownHostException e) {
+			System.out.println(e.getMessage());
+		}
+		catch (IOException e) {
+			System.out.println(e.getMessage());
+		} 
+		catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	}
+	private void initialize() {
+		frame= new JFrame();
+		frame.setTitle("Client - Service Controller");
+		frame.setBounds(100, 100, 500, 300);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		BoxLayout b1=new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS);
+		
+		frame.getContentPane().setLayout(b1);
+		
+		JPanel panel_service_1 =new JPanel();
+		frame.getContentPane().add(panel_service_1);
+		panel_service_1.setLayout(new FlowLayout(FlowLayout.CENTER,5,5));
+		
+		JLabel lblNewLabel_1=new JLabel("Income");
+		panel_service_1.add(lblNewLabel_1);
+		
+		textNumber1 = new JTextField();
+		panel_service_1.add(textNumber1);
+		textNumber1.setColumns(10);
+		
+		JLabel lblNewLabel_2=new JLabel("Spending");
+		panel_service_1.add(lblNewLabel_2);
+		
+		textNumber2 = new JTextField();
+		panel_service_1.add(textNumber2);
+		textNumber2.setColumns(10);
+		
+		//JComboBox comboOperation = new JComboBox();
+		//comboOperation.setModel(new DefaultComboBoxModel(new String [] {"Transaction Tracking","Setting Challenge"}));
+		//panel_service_1.add(comboOperation);
+		
+		JButton btnTrack =new JButton("Record my transaction");
+		btnTrack.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				StreamObserver<TransactionResponse> stResponseObserver =new StreamObserver<TransactionResponse>() {
+					
+					int count=0;
+					
+					@Override
+					public void onNext(TransactionResponse value) {
+						textResponse.append("receiving the "+(count+1)+" response:\n"+value.getMessage()+"\n the account balance "+value.getBalance());
+						count +=1;
+					}
+
+					@Override
+					public void onError(Throwable t) {
+						t.printStackTrace();
+						
+					}
+
+					@Override
+					public void onCompleted() {
+						System.out.println("stream is completed ... received "+ count+ " transaction request");
+						
+					}
+					
+				};
+				StreamObserver<TransactionRequest> requestObserver=stasyncStub.recordTransaction(stResponseObserver);
+				try {
+					requestObserver.onNext(TransactionRequest.newBuilder().setIncome(Float.parseFloat(textNumber1.getText())).setSpending(Float.parseFloat(textNumber2.getText())).build());
+			
+					// Mark the end of requests
+					requestObserver.onCompleted();
+
+					
+					// Sleep for a bit before sending the next one.
+					Thread.sleep(new Random().nextInt(1000) + 500);
+				} 
+				catch (RuntimeException e1) {
+					e1.printStackTrace();
+				} 
+				catch (InterruptedException e1) {			
+					e1.printStackTrace();
+				}
+			};
+			
+		});
+		
+		panel_service_1.add(btnTrack);
+		textResponse = new JTextArea(3, 20);
+		textResponse .setLineWrap(true);
+		textResponse.setWrapStyleWord(true);
+		
+		JScrollPane scrollPane = new JScrollPane(textResponse);
+		
+		//textResponse.setSize(new Dimension(15, 30));
+		panel_service_1.add(scrollPane);
+		
+		JPanel panel_service_2 = new JPanel();
+		frame.getContentPane().add(panel_service_2);
+		panel_service_2.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		JLabel lbNewLabel_3=new JLabel("Set the time for save the target amount");
+		panel_service_2.add(lbNewLabel_3);
+		
+		textNumber3=new JTextField();
+		panel_service_2.add(textNumber3);
+		textNumber3.setColumns(10);
+		
+		JLabel lbNewLabel_4=new JLabel("Set a number of amount");
+		panel_service_2.add(lbNewLabel_4);
+		
+		textNumber4=new JTextField();
+		panel_service_2.add(lbNewLabel_4);
+		
+		textNumber4=new JTextField();
+		panel_service_2.add(textNumber4);
+		textNumber4.setColumns(10);
+		
+		JPanel panel_service_3 = new JPanel();
+		frame.getContentPane().add(panel_service_3);
+		
+		JButton btnSetChallenge=new JButton("Challenge Start !!");
+		btnSetChallenge.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				Goal request=Goal.newBuilder().setEndDate(Long.parseLong(textNumber3.getText())).setIdealBalance(Float.parseFloat(textNumber4.getText())).build();
+				GoalResponse scResponse=soblockingStub.setChallenge(request);
+				
+				textResponse.append("receiving the response:\n"+scResponse.getSuccess()+"\n"+scResponse.getMessage());
+			}
+			
+		});
+		panel_service_2.add(btnSetChallenge);
+		
+		textResponse = new JTextArea(3, 20);
+		textResponse .setLineWrap(true);
+		textResponse.setWrapStyleWord(true);
+		
+		JScrollPane scrollPane2 = new JScrollPane(textResponse);
+		panel_service_2.add(scrollPane2);
+		
+	}
+
+}

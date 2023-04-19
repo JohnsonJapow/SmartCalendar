@@ -34,5 +34,14 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/ivy/.m2/repository/javax/jmdns/jmdns/3.4.1/jmdns-3.4.1.jar" sourcepath="C:/Users/ivy/.m2/repository/javax/jmdns/jmdns/3.4.1/jmdns-3.4.1-sources.jar">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="maven.groupId" value="javax.jmdns"/>
+			<attribute name="maven.artifactId" value="jmdns"/>
+			<attribute name="maven.version" value="3.4.1"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
