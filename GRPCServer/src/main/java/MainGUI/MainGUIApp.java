@@ -55,6 +55,7 @@ public class MainGUIApp extends Thread{
 	private JTextField textNumber3;
 	private JTextField textNumber4;
 	private JTextArea textResponse ;
+	private JTextArea textResponse2 ;
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -155,7 +156,8 @@ public class MainGUIApp extends Thread{
 	private void initialize() {
 		frame= new JFrame();
 		frame.setTitle("Client - Service Controller");
-		frame.setBounds(100, 100, 500, 300);
+		
+		frame.setBounds(100, 100, 700, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		BoxLayout b1=new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS);
@@ -234,42 +236,48 @@ public class MainGUIApp extends Thread{
 			
 		});
 		
-		panel_service_1.add(btnTrack);
+
+		
+		JPanel panel_service_2 = new JPanel();
+		frame.getContentPane().add(panel_service_2);
+		panel_service_2.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		panel_service_2.add(btnTrack);
 		textResponse = new JTextArea(3, 20);
 		textResponse .setLineWrap(true);
 		textResponse.setWrapStyleWord(true);
 		
 		JScrollPane scrollPane = new JScrollPane(textResponse);
 		
-		panel_service_1.add(scrollPane);
-		
-		JPanel panel_service_2 = new JPanel();
-		frame.getContentPane().add(panel_service_2);
-		panel_service_2.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
-		JLabel lbNewLabel_3=new JLabel("Set the time for save the target amount");
-		panel_service_2.add(lbNewLabel_3);
-		
-		textNumber3=new JTextField();
-		panel_service_2.add(textNumber3);
-		textNumber3.setColumns(10);
-		
-		JLabel lbNewLabel_4=new JLabel("Set a number of amount");
-		panel_service_2.add(lbNewLabel_4);
-		
-		textNumber4=new JTextField();
-		panel_service_2.add(lbNewLabel_4);
-		
-		textNumber4=new JTextField();
-		panel_service_2.add(textNumber4);
-		textNumber4.setColumns(10);
+		panel_service_2.add(scrollPane);
 		
 		JPanel panel_service_3 = new JPanel();
 		frame.getContentPane().add(panel_service_3);
+		panel_service_3.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		JLabel lbNewLabel_3=new JLabel("Set the time for save the target amount");
+		panel_service_3.add(lbNewLabel_3);
+		
+		textNumber3=new JTextField();
+		panel_service_3.add(textNumber3);
+		textNumber3.setColumns(10);
+		
+		JLabel lbNewLabel_4=new JLabel("Set a number of amount");
+		panel_service_3.add(lbNewLabel_4);
+		
+		textNumber4=new JTextField();
+		panel_service_3.add(lbNewLabel_4);
+		
+		textNumber4=new JTextField();
+		panel_service_3.add(textNumber4);
+		textNumber4.setColumns(10);
+		
+		JPanel panel_service_4 = new JPanel();
+		frame.getContentPane().add(panel_service_4);
 		
 		JButton btnSetChallenge=new JButton("Challenge Start !!");
 		btnSetChallenge.addActionListener(new ActionListener() {
-
+		
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Runnable setChallengeTask =new Runnable () {
@@ -279,7 +287,7 @@ public class MainGUIApp extends Thread{
 					Goal request=Goal.newBuilder().setEndDate(Long.parseLong(textNumber3.getText())*1000).setIdealBalance(Float.parseFloat(textNumber4.getText())).build();
 					GoalResponse scResponse=soblockingStub.setChallenge(request);
 					
-					textResponse.append("receiving the response:\n"+scResponse.getSuccess()+"\n"+scResponse.getMessage());
+					textResponse2.append("receiving the response:\n"+scResponse.getSuccess()+"\n"+scResponse.getMessage());
 					}
 				};
 
@@ -292,14 +300,14 @@ public class MainGUIApp extends Thread{
 
 				}
 			});
-		panel_service_2.add(btnSetChallenge);
+		panel_service_4.add(btnSetChallenge);
 		
-		textResponse = new JTextArea(3, 20);
-		textResponse .setLineWrap(true);
-		textResponse.setWrapStyleWord(true);
+		textResponse2 = new JTextArea(3, 20);
+		textResponse2 .setLineWrap(true);
+		textResponse2.setWrapStyleWord(true);
 		
-		JScrollPane scrollPane2 = new JScrollPane(textResponse);
-		panel_service_2.add(scrollPane2);
+		JScrollPane scrollPane2 = new JScrollPane(textResponse2);
+		panel_service_4.add(scrollPane2);
 		
 	}
 

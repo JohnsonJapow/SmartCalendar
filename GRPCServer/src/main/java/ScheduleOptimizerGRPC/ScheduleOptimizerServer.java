@@ -110,10 +110,10 @@ private static final Logger logger = Logger.getLogger(EventManagerServer.class.g
 			reader.close();
 			float endB=Float.parseFloat(endBalance);
 			if(request.getIdealBalance()<=(endB-oriB)){
-				responseObserver.onNext(GoalResponse.newBuilder().setSuccess(true).setMessage("Good job!! YOu make it!!").build());
+				responseObserver.onNext(GoalResponse.newBuilder().setSuccess(true).setMessage(" : ) Good job !! You make it  !!").build());
 			}
 			else {
-				responseObserver.onNext(GoalResponse.newBuilder().setSuccess(false).setMessage("Allmost there, try it one more time").build());
+				responseObserver.onNext(GoalResponse.newBuilder().setSuccess(false).setMessage(" : ( Allmost there, try it one more time").build());
 			}
 			
 		} catch (InterruptedException|IOException|NumberFormatException e) {
