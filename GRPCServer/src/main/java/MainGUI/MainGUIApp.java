@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceEvent;
@@ -35,7 +37,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 
-public class MainGUIApp {
+public class MainGUIApp extends Thread{
 	private static ScheduleOptimizerGrpc.ScheduleOptimizerBlockingStub soblockingStub;
 	private static ScheduleOptimizerGrpc.ScheduleOptimizerStub soasyncStub;
 	private static EventManagerGrpc.EventManagerBlockingStub emblockingStub;
@@ -66,30 +68,26 @@ public class MainGUIApp {
 				catch (Exception e) {
 					e.printStackTrace();
 				}
-				
 			}
-			
-			
-			
 		});
-
 	}
 	public MainGUIApp() {
 		discoverServices(main_service_type);
-		//discoverServices(main2_service_type);
+		discoverServices(main2_service_type);
 		
 		String host=smartInfo.getHostAddresses()[0];
 		int port=smartInfo.getPort();
-		//String host2=smartInfo2.getHostAddresses()[0];
-		//int port2=smartInfo2.getPort();
+		String host2=smartInfo2.getHostAddresses()[0];
+		int port2=smartInfo2.getPort();
 
 		
 		ManagedChannel channel=ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
 		stblockingStub = SpendingTrackerGrpc.newBlockingStub(channel);
 		stasyncStub= SpendingTrackerGrpc.newStub(channel);
-		//ManagedChannel channe2=ManagedChannelBuilder.forAddress(host2, port2).usePlaintext().build();
-		//soblockingStub = ScheduleOptimizerGrpc.newBlockingStub(channe2);
-		//soasyncStub = ScheduleOptimizerGrpc.newStub(channe2);
+		ManagedChannel channe2=ManagedChannelBuilder.forAddress(host2, port2).usePlaintext().build();
+		soblockingStub = ScheduleOptimizerGrpc.newBlockingStub(channe2);
+		soasyncStub = ScheduleOptimizerGrpc.newStub(channe2);
+		
 		initialize();
 	}
 
@@ -175,7 +173,7 @@ public class MainGUIApp {
 		panel_service_1.add(textNumber1);
 		textNumber1.setColumns(10);
 		
-		JLabel lblNewLabel_2=new JLabel("Spending");
+		JLabel lblNewLabel_2=new JLabel("Expense");
 		panel_service_1.add(lblNewLabel_2);
 		
 		textNumber2 = new JTextField();
@@ -243,7 +241,6 @@ public class MainGUIApp {
 		
 		JScrollPane scrollPane = new JScrollPane(textResponse);
 		
-		//textResponse.setSize(new Dimension(15, 30));
 		panel_service_1.add(scrollPane);
 		
 		JPanel panel_service_2 = new JPanel();
@@ -275,14 +272,26 @@ public class MainGUIApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				Goal request=Goal.newBuilder().setEndDate(Long.parseLong(textNumber3.getText())).setIdealBalance(Float.parseFloat(textNumber4.getText())).build();
-				GoalResponse scResponse=soblockingStub.setChallenge(request);
+				Runnable setChallengeTask =new Runnable () {
+				public void run() {
 				
-				textResponse.append("receiving the response:\n"+scResponse.getSuccess()+"\n"+scResponse.getMessage());
-			}
-			
-		});
+					// TODO Auto-generated method stub
+					Goal request=Goal.newBuilder().setEndDate(Long.parseLong(textNumber3.getText())*1000).setIdealBalance(Float.parseFloat(textNumber4.getText())).build();
+					GoalResponse scResponse=soblockingStub.setChallenge(request);
+					
+					textResponse.append("receiving the response:\n"+scResponse.getSuccess()+"\n"+scResponse.getMessage());
+					}
+				};
+
+	            // Create a new ExecutorService with a single thread
+	            ExecutorService executor = Executors.newSingleThreadExecutor();
+	            // Submit the setChallengeTask to the executor
+	            executor.submit(setChallengeTask);
+	            // Shutdown the executor after the task is complete
+	            executor.shutdown();
+
+				}
+			});
 		panel_service_2.add(btnSetChallenge);
 		
 		textResponse = new JTextArea(3, 20);

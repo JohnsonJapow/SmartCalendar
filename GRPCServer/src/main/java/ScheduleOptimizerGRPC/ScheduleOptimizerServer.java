@@ -23,22 +23,24 @@ public class ScheduleOptimizerServer extends ScheduleOptimizerImplBase{
 private static final Logger logger = Logger.getLogger(EventManagerServer.class.getName());
     
     
-	public static void main(String[] args) throws IOException, InterruptedException{
+	public static void main(String[] args){
 			
 			
 			ScheduleOptimizerServer ScheduleOptimizerserver=new ScheduleOptimizerServer();
 			Properties prop=ScheduleOptimizerserver.getProperties();
 			ScheduleOptimizerserver.registerService(prop);
 			
-			
-			
 			int port=Integer.valueOf( prop.getProperty("service2_port") );
-			Server server;
-		
-			server=ServerBuilder.forPort(port).addService(ScheduleOptimizerserver).build().start();
-			logger.info("Server started, listening on " + port);
-			server.awaitTermination();
-	
+
+			try {
+				Server server;
+				server=ServerBuilder.forPort(port).addService(ScheduleOptimizerserver).build().start();
+				logger.info("Server started, listening on " + port);
+				server.awaitTermination();
+			}
+			catch (InterruptedException | IOException e) {	
+				e.printStackTrace();
+			}
 			
 	}
 	
@@ -114,7 +116,7 @@ private static final Logger logger = Logger.getLogger(EventManagerServer.class.g
 				responseObserver.onNext(GoalResponse.newBuilder().setSuccess(false).setMessage("Allmost there, try it one more time").build());
 			}
 			
-		} catch (InterruptedException|IOException e) {
+		} catch (InterruptedException|IOException|NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
