@@ -39,9 +39,7 @@ import io.grpc.stub.StreamObserver;
 
 public class MainGUIApp{
 	private static ScheduleOptimizerGrpc.ScheduleOptimizerBlockingStub soblockingStub;
-	private static ScheduleOptimizerGrpc.ScheduleOptimizerStub soasyncStub;
 
-	private static SpendingTrackerGrpc.SpendingTrackerBlockingStub stblockingStub;
 	private static SpendingTrackerGrpc.SpendingTrackerStub stasyncStub;
 	
 	private ServiceInfo smartInfo;
@@ -82,11 +80,10 @@ public class MainGUIApp{
 
 		
 		ManagedChannel channel=ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
-		stblockingStub = SpendingTrackerGrpc.newBlockingStub(channel);
 		stasyncStub= SpendingTrackerGrpc.newStub(channel);
 		ManagedChannel channe2=ManagedChannelBuilder.forAddress(host2, port2).usePlaintext().build();
 		soblockingStub = ScheduleOptimizerGrpc.newBlockingStub(channe2);
-		soasyncStub = ScheduleOptimizerGrpc.newStub(channe2);
+
 		
 		initialize();
 	}
@@ -181,10 +178,6 @@ public class MainGUIApp{
 		panel_service_1.add(textNumber2);
 		textNumber2.setColumns(10);
 		
-		//JComboBox comboOperation = new JComboBox();
-		//comboOperation.setModel(new DefaultComboBoxModel(new String [] {"Transaction Tracking","Setting Challenge"}));
-		//panel_service_1.add(comboOperation);
-		
 		JButton btnTrack =new JButton("Record my transaction");
 		btnTrack.addActionListener(new ActionListener() {
 
@@ -197,7 +190,7 @@ public class MainGUIApp{
 					
 					@Override
 					public void onNext(TransactionResponse value) {
-						textResponse.append("receiving the "+(count+1)+" response:\n"+value.getMessage()+"\n the account balance "+value.getBalance());
+						textResponse.append("receiving the "+(count+1)+" response:\n"+value.getMessage()+"\n the account balance "+value.getBalance()+"\n");
 						count +=1;
 					}
 
@@ -209,7 +202,7 @@ public class MainGUIApp{
 
 					@Override
 					public void onCompleted() {
-						System.out.println("stream is completed ... received "+ count+ " transaction request");
+						textResponse.append("stream is completed ... received "+ count+ " transaction request \n");
 						
 					}
 					
@@ -254,14 +247,14 @@ public class MainGUIApp{
 		frame.getContentPane().add(panel_service_3);
 		panel_service_3.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
-		JLabel lbNewLabel_3=new JLabel("Set the time for save the target amount");
+		JLabel lbNewLabel_3=new JLabel("Set the time to save the target amount");
 		panel_service_3.add(lbNewLabel_3);
 		
 		textNumber3=new JTextField();
 		panel_service_3.add(textNumber3);
 		textNumber3.setColumns(10);
 		
-		JLabel lbNewLabel_4=new JLabel("Set a number of amount");
+		JLabel lbNewLabel_4=new JLabel("Set your saving target");
 		panel_service_3.add(lbNewLabel_4);
 		
 		textNumber4=new JTextField();
@@ -287,7 +280,7 @@ public class MainGUIApp{
 					Goal request=Goal.newBuilder().setEndDate(Long.parseLong(textNumber3.getText())*1000).setIdealBalance(Float.parseFloat(textNumber4.getText())).build();
 					GoalResponse scResponse=soblockingStub.setChallenge(request);
 					
-					textResponse2.append("receiving the response:\n"+scResponse.getSuccess()+"\n"+scResponse.getMessage());
+					textResponse2.append("receiving the response:"+scResponse.getSuccess()+"\n"+scResponse.getMessage()+"\n");
 					}
 				};
 

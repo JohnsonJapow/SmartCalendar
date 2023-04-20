@@ -7,8 +7,9 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
-
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceEvent;
 import javax.jmdns.ServiceInfo;
@@ -21,7 +22,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-
 import EventManagerGRPC.DateRange;
 import EventManagerGRPC.Event;
 import EventManagerGRPC.EventManagerGrpc;
@@ -105,7 +105,7 @@ private void discoverServices(String service_type) {
 
 					int port = serviceinfo.getPort();
 					
-					System.out.println("resolving "+ service_type +" with properties ...");
+					System.out.println("resolving "+ serviceType +" with properties ...");
 					System.out.println("\t port: "+ port);
 					System.out.println("\t type: "+ event.getType());
 					System.out.println("\t name: "+ event.getName());
@@ -177,7 +177,7 @@ private void discoverServices(String service_type) {
 		frame.getContentPane().add(panel_service_4);
 		panel_service_4.setLayout(new FlowLayout(FlowLayout.LEFT,5,5));
 		
-		JLabel lbNewLabel_4=new JLabel("Event Date");
+		JLabel lbNewLabel_4=new JLabel("Event Date : yyyyMMdd");
 		panel_service_4.add(lbNewLabel_4);
 		
 		textNumber4=new JTextField();
@@ -193,9 +193,23 @@ private void discoverServices(String service_type) {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Event request=Event.newBuilder().setId(textNumber1.getText()).setName(textNumber2.getText()).setDescription(textNumber3.getText()).setDate(Long.parseLong(textNumber4.getText())).build();
-				EventResponse response=emblockingStub.addEvent(request);
-				textResponse.append(response.getSuccess()+","+response.getMessage());		
+				SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+				format.setLenient(false);
+				
+				try {
+					Date date=format.parse(textNumber4.getText());
+					Event request=Event.newBuilder().setId(textNumber1.getText()).setName(textNumber2.getText()).setDescription(textNumber3.getText()).setDate(Long.parseLong(textNumber4.getText())).build();
+					EventResponse response=emblockingStub.addEvent(request);
+					textResponse.append("Request validation "+response.getSuccess()+"\n,"+response.getMessage()+"\n");	
+				}
+
+				catch (java.text.ParseException e1) {
+					e1.printStackTrace();
+					textResponse.append("Invalid date!\n");
+				}
+				
+				
+	
 			}
 
 		});
@@ -221,23 +235,21 @@ private void discoverServices(String service_type) {
 				StreamObserver<EventResponse> responseObserver = new StreamObserver<EventResponse>() {
 					@Override
 						public void onNext(EventResponse value) {
-							// TODO Auto-generated method stub
-						textResponse2.append("receiving message: " + value.getSuccess()+value.getMessage());
+							textResponse2.append("Request validation: " + value.getSuccess()+"\n"+value.getMessage()+"\n");
 						}
 						@Override
 						public void onError(Throwable t) {
-							// TODO Auto-generated method stub
 						}
 						@Override
 						public void onCompleted() {
-						// TODO Auto-generated method stub
-							textResponse2.append("completed ");
 						}
 					};
 					StreamObserver<EventModificationRequest> requestObserver = emasyncStub.modifyEvent(responseObserver);
 					try {
+						SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+						format.setLenient(false);
+						Date date = format.parse(textNumber4.getText());
 						requestObserver.onNext(EventModificationRequest.newBuilder().setId(textNumber1.getText()).setName(textNumber2.getText()).setDescription(textNumber3.getText()).setDate(Long.parseLong(textNumber4.getText())).build());
-						textResponse2.append("SENDING EMSSAGES");
 						// Mark the end of requests
 						requestObserver.onCompleted();
 						// Sleep for a bit before sending the next one.
@@ -248,6 +260,10 @@ private void discoverServices(String service_type) {
 					} 
 					catch (InterruptedException d) { 
 						d.printStackTrace();
+					} 
+					catch (java.text.ParseException e1) {
+						e1.printStackTrace();
+						textResponse2.append("Invalid date!\n");
 					}
 				
 			}
@@ -265,7 +281,7 @@ private void discoverServices(String service_type) {
 		frame.getContentPane().add(panel_service_7);
 		panel_service_7.setLayout(new FlowLayout(FlowLayout.LEFT,5,5));
 		
-		JLabel lbNewLabel_7=new JLabel("Start Date");
+		JLabel lbNewLabel_7=new JLabel("Start Date : yyyyMMdd");
 		panel_service_7.add(lbNewLabel_7);
 		
 		textNumber5=new JTextField();
@@ -276,7 +292,7 @@ private void discoverServices(String service_type) {
 		frame.getContentPane().add(panel_service_8);
 		panel_service_8.setLayout(new FlowLayout(FlowLayout.LEFT,5,5));
 		
-		JLabel lbNewLabel_8=new JLabel("End Date");
+		JLabel lbNewLabel_8=new JLabel("End Date : yyyyMMdd");
 		panel_service_8.add(lbNewLabel_8);
 		
 		textNumber6=new JTextField();
@@ -292,12 +308,26 @@ private void discoverServices(String service_type) {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
+				SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+				format.setLenient(false);
+				
+				 try {
+					Date date = format.parse(textNumber5.getText());
+					Date date2 = format.parse(textNumber6.getText());
+				} catch (java.text.ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+					textResponse3.append("Invalid date!\n");
+				}
+				 
+				
 				DateRange request = DateRange.newBuilder().setStartDate(Long.parseLong(textNumber5.getText())).setEndDate(Long.parseLong(textNumber6.getText())).build();
 				StreamObserver<Event> responseObserver=new StreamObserver<Event>() {
 					int count=0;
 					@Override
 					public void onNext(Event value) {
-						textResponse3.append("receiving messages " + value);
+						textResponse3.append("receiving messages: " + value+"\n");
 						count += 1;
 					}
 					@Override
@@ -306,7 +336,7 @@ private void discoverServices(String service_type) {
 					}
 					@Override
 					public void onCompleted() {
-							textResponse3.append("stream is completed ... received "+ count+ " messages");
+						textResponse3.append("stream is completed ... received "+ count+ " messages \n");
 					}
 				};
 				emasyncStub.listEvents(request, responseObserver);

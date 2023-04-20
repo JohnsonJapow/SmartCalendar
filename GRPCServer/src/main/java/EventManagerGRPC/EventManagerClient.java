@@ -14,8 +14,8 @@ public class EventManagerClient {
 		ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50052).usePlaintext().build();
 		blockingStub=EventManagerGrpc.newBlockingStub(channel);
 		asyncStub=EventManagerGrpc.newStub(channel);
-		//addEvent();
-		//modifyEvent();
+		addEvent();
+		modifyEvent();
 		listEvent();
 		try {
 		channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
