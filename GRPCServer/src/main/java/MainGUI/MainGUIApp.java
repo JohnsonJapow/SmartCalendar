@@ -44,6 +44,9 @@ public class MainGUIApp {
 	private static SpendingTrackerGrpc.SpendingTrackerStub stasyncStub;
 	
 	private ServiceInfo smartInfo;
+	private ServiceInfo smartInfo2;
+	private static final String main_service_type="_main._tcp.local.";
+	private static final String main2_service_type="_main2._tcp.local.";
 	private JFrame frame;
 	private JTextField textNumber1;
 	private JTextField textNumber2;
@@ -72,18 +75,21 @@ public class MainGUIApp {
 
 	}
 	public MainGUIApp() {
-		String main_service_type="_main2._tcp.local.";
 		discoverServices(main_service_type);
-
+		//discoverServices(main2_service_type);
+		
 		String host=smartInfo.getHostAddresses()[0];
 		int port=smartInfo.getPort();
+		//String host2=smartInfo2.getHostAddresses()[0];
+		//int port2=smartInfo2.getPort();
+
 		
 		ManagedChannel channel=ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
-		
 		stblockingStub = SpendingTrackerGrpc.newBlockingStub(channel);
 		stasyncStub= SpendingTrackerGrpc.newStub(channel);
-		soblockingStub = ScheduleOptimizerGrpc.newBlockingStub(channel);
-		soasyncStub = ScheduleOptimizerGrpc.newStub(channel);
+		//ManagedChannel channe2=ManagedChannelBuilder.forAddress(host2, port2).usePlaintext().build();
+		//soblockingStub = ScheduleOptimizerGrpc.newBlockingStub(channe2);
+		//soasyncStub = ScheduleOptimizerGrpc.newStub(channe2);
 		initialize();
 	}
 
@@ -109,16 +115,26 @@ public class MainGUIApp {
 				public void serviceResolved(ServiceEvent event) {
 					System.out.println("Smart Service resolved:  "+event.getInfo());
 					
-					smartInfo = event.getInfo();
+					ServiceInfo serviceinfo=event.getInfo();
+					String serviceType=event.getType();
 					
-					int port = smartInfo.getPort();
+                    if (serviceType.equals(main_service_type)) {
+                    	smartInfo = serviceinfo;
+                    } else if (serviceType.equals(main2_service_type)) {
+                    	smartInfo2 = serviceinfo;
+                    }
+					
+					
+					
+					
+					int port = serviceinfo.getPort();
 					
 					System.out.println("resolving "+ service_type +" with properties ...");
 					System.out.println("\t port: "+ port);
 					System.out.println("\t type: "+ event.getType());
 					System.out.println("\t name: "+ event.getName());
-					System.out.println("\t description/properties: "+ smartInfo.getNiceTextString());
-					System.out.println("\t host: "+ smartInfo.getHostAddresses()[0]);
+					System.out.println("\t description/properties: "+ serviceinfo.getNiceTextString());
+					System.out.println("\t host: "+ serviceinfo.getHostAddresses()[0]);
 				}
 				
 			});

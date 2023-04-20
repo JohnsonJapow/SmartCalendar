@@ -48,7 +48,7 @@ private static final Logger logger = Logger.getLogger(EventManagerServer.class.g
 		try(InputStream input= new FileInputStream("src/main/resources/SpendingTracker.properties")) {
 			prop=new Properties();
 			prop.load(input);
-			System.out.println("Spending Tracker properties...");
+			System.out.println("Schedule Optimizer properties...");
             System.out.println("\t service_type: " + prop.getProperty("service2_type"));
             System.out.println("\t service_name: " +prop.getProperty("service2_name"));
             System.out.println("\t service_description: " +prop.getProperty("service2_description"));
@@ -65,13 +65,13 @@ private static final Logger logger = Logger.getLogger(EventManagerServer.class.g
 			 // Create a JmDNS instance
             JmDNS jmdns = JmDNS.create(InetAddress.getLocalHost());
             
-            String service_type = prop.getProperty("service2_type") ;//"_http._tcp.local.";
-            String service_name = prop.getProperty("service2_name")  ;// "example";
-           // int service_port = 1234;
-            int service_port = Integer.valueOf( prop.getProperty("service2_port") );// #.50051;
+            String service_type = prop.getProperty("service2_type") ;
+            String service_name = prop.getProperty("service2_name")  ;
+           
+            int service_port = Integer.valueOf( prop.getProperty("service2_port") );
 
             
-            String service_description_properties = prop.getProperty("service2_description")  ;//"path=index.html";
+            String service_description_properties = prop.getProperty("service2_description")  ;
             
             // Register a service
             ServiceInfo serviceInfo = ServiceInfo.create(service_type, service_name, service_port, service_description_properties);

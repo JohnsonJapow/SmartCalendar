@@ -120,9 +120,9 @@ public class SpendingTrackerServer extends SpendingTrackerImplBase {
 				
 				
 				
-			    if (!income.matches("[-+]?[0-9]*\\\\.?[0-9]+") || !spending.matches("[-+]?[0-9]*\\\\.?[0-9]+")||income.isEmpty()||spending.isEmpty()|| income.endsWith(".") || spending.endsWith(".")) {
+			    if (!income.matches("[-+]?[0-9]*\\.?[0-9]+") || !spending.matches("[-+]?[0-9]*\\.?[0-9]+")||income.isEmpty()||spending.isEmpty()|| income.endsWith(".") || spending.endsWith(".")) {
 			        // Handle invalid input
-			    	//responseObserver.onNext(TransactionResponse.newBuilder().setMessage("Invalid value").setBalance(0).build());
+			    	responseObserver.onNext(TransactionResponse.newBuilder().setMessage("Invalid value").setBalance(0).build());
 			    	responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Invalid input: income and spending must only contain digits.").asRuntimeException());
 			        return;
 			    }
@@ -132,7 +132,7 @@ public class SpendingTrackerServer extends SpendingTrackerImplBase {
 			    // Check that income and spending are not negative
 			    if (incomeFloat < 0 || spendingFloat < 0) {
 			        // Handle invalid input
-			    	//responseObserver.onNext(TransactionResponse.newBuilder().setMessage("value must be non-negative").setBalance(0).build());
+			    	responseObserver.onNext(TransactionResponse.newBuilder().setMessage("value must be non-negative").setBalance(0).build());
 			        responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Invalid input: income and spending must be non-negative.").asRuntimeException());
 			        return;
 			    }
