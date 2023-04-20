@@ -37,11 +37,10 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 
-public class MainGUIApp extends Thread{
+public class MainGUIApp{
 	private static ScheduleOptimizerGrpc.ScheduleOptimizerBlockingStub soblockingStub;
 	private static ScheduleOptimizerGrpc.ScheduleOptimizerStub soasyncStub;
-	private static EventManagerGrpc.EventManagerBlockingStub emblockingStub;
-	private static EventManagerGrpc.EventManagerStub emasyncStub;
+
 	private static SpendingTrackerGrpc.SpendingTrackerBlockingStub stblockingStub;
 	private static SpendingTrackerGrpc.SpendingTrackerStub stasyncStub;
 	
@@ -274,6 +273,7 @@ public class MainGUIApp extends Thread{
 		
 		JPanel panel_service_4 = new JPanel();
 		frame.getContentPane().add(panel_service_4);
+		panel_service_4.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		JButton btnSetChallenge=new JButton("Challenge Start !!");
 		btnSetChallenge.addActionListener(new ActionListener() {

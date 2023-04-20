@@ -2,16 +2,22 @@ package EventManagerGRPC;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetAddress;
 import java.nio.file.Files;
 
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Properties;
 import java.util.logging.Logger;
+
+import javax.jmdns.JmDNS;
+import javax.jmdns.ServiceInfo;
 
 import EventManagerGRPC.EventManagerGrpc.EventManagerImplBase;
 import io.grpc.Server;
@@ -28,9 +34,13 @@ public class EventManagerServer extends EventManagerImplBase {
 			
 			
 		EventManagerServer eventserver=new EventManagerServer();
-			int port=50052;
-			Server server;
+		Properties prop=eventserver.getProperties();
+		eventserver.registerService(prop);
+		
+			int port=Integer.valueOf( prop.getProperty("service3_port") );
+			
 			try {
+				Server server;
 				server=ServerBuilder.forPort(port).addService(eventserver).build().start();
 				logger.info("Server started, listening on " + port);
 				server.awaitTermination();
@@ -39,7 +49,57 @@ public class EventManagerServer extends EventManagerImplBase {
 			}
 			
 	}
+	private Properties getProperties() {
+		Properties prop=null;
+		
+		try(InputStream input= new FileInputStream("src/main/resources/SpendingTracker.properties")) {
+			prop=new Properties();
+			prop.load(input);
+			System.out.println("Event Manager properties...");
+            System.out.println("\t service_type: " + prop.getProperty("service3_type"));
+            System.out.println("\t service_name: " +prop.getProperty("service3_name"));
+            System.out.println("\t service_description: " +prop.getProperty("service3_description"));
+	        System.out.println("\t service_port: " +prop.getProperty("service3_port"));
+		}
+		catch(IOException ex) {
+			ex.printStackTrace();
+		}
+		return prop;
+	}
+	
+	private void registerService(Properties prop) {
+		try {
+			 // Create a JmDNS instance
+            JmDNS jmdns = JmDNS.create(InetAddress.getLocalHost());
+            
+            String service_type = prop.getProperty("service3_type") ;
+            String service_name = prop.getProperty("service3_name")  ;
+           
+            int service_port = Integer.valueOf( prop.getProperty("service3_port") );
 
+            
+            String service_description_properties = prop.getProperty("service3_description")  ;
+            
+            // Register a service
+            ServiceInfo serviceInfo = ServiceInfo.create(service_type, service_name, service_port, service_description_properties);
+            jmdns.registerService(serviceInfo);
+            System.out.printf("registrering service with type %s and name %s \n", service_type, service_name);
+            
+            // Wait a bit
+            Thread.sleep(1000);
+
+            // Unregister all services
+            //jmdns.unregisterAllServices();
+		}
+		catch (IOException e) {
+            System.out.println(e.getMessage());
+        } 
+		catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	private LinkedList mergeEvent(LinkedList splitList) {
         LinkedList <String>newE=new LinkedList<>();
 		
