@@ -14,16 +14,16 @@ package extrasmart;
 
 service ScheduleOptimizer {
 
-rpc SetChallenge (Goal) returns (GoalResponse) {}
+	rpc SetChallenge (Goal) returns (GoalResponse) {}
 
 
 }
 
 message Goal {
 
-float ideal_balance = 1;
+	float ideal_balance = 1;
 
-int64 end_date = 2;
+	int64 end_date = 2;
 
 }
 
@@ -31,8 +31,8 @@ int64 end_date = 2;
 
 message GoalResponse {
 
-bool success = 1;
-
-string message = 2;
+	bool success = 1;
+	
+	string message = 2;
 
 }

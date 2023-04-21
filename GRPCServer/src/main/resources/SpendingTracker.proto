@@ -15,17 +15,17 @@ package extrasmart;
 
 
 service SpendingTracker {
-
-rpc RecordTransaction (stream TransactionRequest) returns (stream TransactionResponse) {}
+	
+	rpc RecordTransaction (stream TransactionRequest) returns (stream TransactionResponse) {}
 
 }
 
 
 message TransactionRequest {
-
-float income = 1;
-
-float spending = 2;
+	
+	float income = 1;
+	
+	float spending = 2;
 
 }
 
@@ -33,11 +33,11 @@ float spending = 2;
 
 message TransactionResponse {
 
-float balance = 1;
-
-float currentBalance=2;
-
-string message=3;
+	float balance = 1;
+	
+	float currentBalance=2;
+	
+	string message=3;
 
 }
 

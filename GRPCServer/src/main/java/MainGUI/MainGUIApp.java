@@ -250,7 +250,7 @@ public class MainGUIApp{
 		frame.getContentPane().add(panel_service_3);
 		panel_service_3.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
-		JLabel lbNewLabel_3=new JLabel("Set the time to save the target amount");
+		JLabel lbNewLabel_3=new JLabel("Set the time (seconds) to save the money");
 		panel_service_3.add(lbNewLabel_3);
 		
 		textNumber3=new JTextField();

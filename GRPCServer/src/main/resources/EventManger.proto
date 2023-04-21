@@ -14,23 +14,23 @@ package extrasmart;
 
 service EventManager {
 
-rpc AddEvent (Event) returns (EventResponse) {}
-
-rpc ModifyEvent (stream EventModificationRequest) returns (EventResponse) {}
-
-rpc ListEvents (DateRange) returns (stream Event) {}
+	rpc AddEvent (Event) returns (EventResponse) {}
+	
+	rpc ModifyEvent (stream EventModificationRequest) returns (EventResponse) {}
+	
+	rpc ListEvents (DateRange) returns (stream Event) {}
 
 }
 
 message Event {
 
-string id = 1;
-
-string name = 2;
-
-string description = 3;
-
-int64 date = 5;
+	string id = 1;
+	
+	string name = 2;
+	
+	string description = 3;
+	
+	int64 date = 5;
 
 }
 
@@ -38,9 +38,9 @@ int64 date = 5;
 
 message EventResponse {
 
-bool success =1;
-
-string message = 2;
+	bool success =1;
+	
+	string message = 2;
 
 }
 
@@ -48,13 +48,13 @@ string message = 2;
 
 message EventModificationRequest {
 
-string id = 1;
-
-string name = 2;
-
-string description = 3;
-
-int64 date = 6;
+	string id = 1;
+	
+	string name = 2;
+	
+	string description = 3;
+	
+	int64 date = 6;
 
 }
 
@@ -63,8 +63,8 @@ int64 date = 6;
 
 message DateRange {
 
-int64 start_date = 1;
-
-int64 end_date = 2;
+	int64 start_date = 1;
+	
+	int64 end_date = 2;
 
 }

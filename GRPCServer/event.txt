@@ -1,9 +1,7 @@
-ABC153,Dating,Excellent,327
-ABC133,working,I like working,300
-ABC143,working,I like working,300
-ABC173,Dating,Excellent,327
-123456,DS,DistributedSystem,1000
-55555,afv,etf,20220105
-afsdaf,fsadfsdfs,fsadfsaf,20001231
-fasfdsad,fsdfasdfas,sfsdafds,20221230
-9999,55,9999,20220313
+ABC173,Dating,Excellent,20220105
+ABC143,working,I like working,20221230
+ABC133,DS,DistributedSystem,20220313
+NCI123,AAP,ADVANCEDALGORITHMPROGRAM,20230420
+Iam123,parkrun123,it is great123,20230426
+ds123,dsd,distrubutedsystemd,20230422
+td123,shopping,clothes,20230502
