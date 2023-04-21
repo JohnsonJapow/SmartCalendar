@@ -16,9 +16,8 @@ import javax.jmdns.ServiceEvent;
 import javax.jmdns.ServiceInfo;
 import javax.jmdns.ServiceListener;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
+
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -26,7 +25,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import EventManagerGRPC.EventManagerGrpc;
 import ScheduleOptimizerGRPC.Goal;
 import ScheduleOptimizerGRPC.GoalResponse;
 import ScheduleOptimizerGRPC.ScheduleOptimizerGrpc;
@@ -70,27 +68,32 @@ public class MainGUIApp{
 		});
 	}
 	public MainGUIApp() {
+		//create a jmdns instance for main_service_type
 		discoverServices(main_service_type);
+		//create a jmdns instance for main2_service_type
 		discoverServices(main2_service_type);
 		
 		String host=smartInfo.getHostAddresses()[0];
 		int port=smartInfo.getPort();
 		String host2=smartInfo2.getHostAddresses()[0];
 		int port2=smartInfo2.getPort();
-
-		
+		//build the channel to  channel
 		ManagedChannel channel=ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
+		//stubs -- generate from proto
 		stasyncStub= SpendingTrackerGrpc.newStub(channel);
+		//build the channel to  channel2
 		ManagedChannel channe2=ManagedChannelBuilder.forAddress(host2, port2).usePlaintext().build();
+		//stubs -- generate from proto
 		soblockingStub = ScheduleOptimizerGrpc.newBlockingStub(channe2);
 
-		
+		//start the GUI implementation
 		initialize();
 	}
 
 	private void discoverServices(String service_type) {
 		
 		try {
+			// Create a JmDNS instance
 			JmDNS jmdns =JmDNS.create(InetAddress.getLocalHost());
 			
 			jmdns.addServiceListener(service_type, new ServiceListener() {
@@ -98,30 +101,23 @@ public class MainGUIApp{
 				@Override
 				public void serviceAdded(ServiceEvent event) {
 					System.out.println("Smart Service added:  "+event.getInfo());
-					
 				}
-
 				@Override
 				public void serviceRemoved(ServiceEvent event) {
 					System.out.println("Smart Service removed:  "+event.getInfo());					
 				}
-
 				@Override
 				public void serviceResolved(ServiceEvent event) {
-					System.out.println("Smart Service resolved:  "+event.getInfo());
-					
+					System.out.println("Smart Service resolved:  "+event.getInfo());	
 					ServiceInfo serviceinfo=event.getInfo();
 					String serviceType=event.getType();
-					
+					//to check the parameter is match the certain  service types
+					//if it is match replace smartInfo to the matched serviceInfo
                     if (serviceType.equals(main_service_type)) {
                     	smartInfo = serviceinfo;
                     } else if (serviceType.equals(main2_service_type)) {
                     	smartInfo2 = serviceinfo;
                     }
-					
-					
-					
-					
 					int port = serviceinfo.getPort();
 					
 					System.out.println("resolving "+ service_type +" with properties ...");
@@ -133,7 +129,7 @@ public class MainGUIApp{
 				}
 				
 			});
-			
+			// Wait a bit
 			Thread.sleep(2000);
 			
 			jmdns.close();
@@ -149,6 +145,9 @@ public class MainGUIApp{
 			e.printStackTrace();
 		}	
 	}
+	/**
+	 * Initialize the contents of the frame.
+	 */
 	private void initialize() {
 		frame= new JFrame();
 		frame.setTitle("Client - Service Controller");
@@ -178,6 +177,7 @@ public class MainGUIApp{
 		panel_service_1.add(textNumber2);
 		textNumber2.setColumns(10);
 		
+		//The first service is record our transaction
 		JButton btnTrack =new JButton("Record my transaction");
 		btnTrack.addActionListener(new ActionListener() {
 
@@ -189,9 +189,11 @@ public class MainGUIApp{
 					int count=0;
 					
 					@Override
-					public void onNext(TransactionResponse value) {
+					public void onNext(TransactionResponse value) {		
+
+					    
 						textResponse.append("receiving the "+(count+1)+" response:\n"+value.getMessage()+"\n the account balance "+value.getBalance()+"\n");
-						count +=1;
+					    count +=1;
 					}
 
 					@Override
@@ -209,6 +211,7 @@ public class MainGUIApp{
 				};
 				StreamObserver<TransactionRequest> requestObserver=stasyncStub.recordTransaction(stResponseObserver);
 				try {
+				
 					requestObserver.onNext(TransactionRequest.newBuilder().setIncome(Float.parseFloat(textNumber1.getText())).setSpending(Float.parseFloat(textNumber2.getText())).build());
 			
 					// Mark the end of requests
@@ -268,18 +271,20 @@ public class MainGUIApp{
 		frame.getContentPane().add(panel_service_4);
 		panel_service_4.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
+		//the second service is to set a saving goal, and try to 
+		//achieve it in a certain time
 		JButton btnSetChallenge=new JButton("Challenge Start !!");
 		btnSetChallenge.addActionListener(new ActionListener() {
 		
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				// this will let the service work in background by creating a thread
+				//that allow the first service could at the same time  before the timer is finish
 				Runnable setChallengeTask =new Runnable () {
 				public void run() {
 				
-					// TODO Auto-generated method stub
 					Goal request=Goal.newBuilder().setEndDate(Long.parseLong(textNumber3.getText())*1000).setIdealBalance(Float.parseFloat(textNumber4.getText())).build();
-					GoalResponse scResponse=soblockingStub.setChallenge(request);
-					
+					GoalResponse scResponse=soblockingStub.setChallenge(request);					
 					textResponse2.append("receiving the response:"+scResponse.getSuccess()+"\n"+scResponse.getMessage()+"\n");
 					}
 				};

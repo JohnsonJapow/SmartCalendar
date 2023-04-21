@@ -11,7 +11,6 @@ import java.net.InetAddress;
 import java.nio.file.Files;
 
 import java.nio.file.Paths;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -28,21 +27,27 @@ import io.grpc.stub.StreamObserver;
 
 public class EventManagerServer extends EventManagerImplBase {
 	private static final Logger logger = Logger.getLogger(EventManagerServer.class.getName());
-    
+    // the file to output record data
     private static String eventPath="event.txt";
 	public static void main(String[] args){
 			
-			
+		//create class instance	
 		EventManagerServer eventserver=new EventManagerServer();
+		//get the properties for this service
 		Properties prop=eventserver.getProperties();
+		//register the service with JmDNS 
 		eventserver.registerService(prop);
-		
+			//invoke the port for this service from the properties file
 			int port=Integer.valueOf( prop.getProperty("service3_port") );
 			
 			try {
+				//create a server on the port defined in variable "port"
+				//and attach a service "eventserver"
 				Server server;
 				server=ServerBuilder.forPort(port).addService(eventserver).build().start();
+				 // Giving a logging information on the server console that server has started
 				logger.info("Server started, listening on " + port);
+				// Server will be running until externally terminated.
 				server.awaitTermination();
 			} catch (InterruptedException | IOException e) {	
 				e.printStackTrace();
@@ -54,6 +59,7 @@ public class EventManagerServer extends EventManagerImplBase {
 		
 		try(InputStream input= new FileInputStream("src/main/resources/SpendingTracker.properties")) {
 			prop=new Properties();
+			//load a properties file
 			prop.load(input);
 			System.out.println("Event Manager properties...");
             System.out.println("\t service_type: " + prop.getProperty("service3_type"));
@@ -99,10 +105,10 @@ public class EventManagerServer extends EventManagerImplBase {
 			e.printStackTrace();
 		}
 	}
-	
-	private LinkedList mergeEvent(LinkedList splitList) {
+	// Here we merge the record into a certain format, which allow us to swap the modification easier
+	private LinkedList<String> mergeEvent(LinkedList<String> splitList) {
         LinkedList <String>newE=new LinkedList<>();
-		
+        //merge the each four datas into a new data, and store the new data in the linkedlist
 		for (int i = 0; i < splitList.size(); i += 4) {
 			StringBuilder builder = new StringBuilder();
 			builder.append(splitList.get(i)).append(",");
@@ -113,12 +119,14 @@ public class EventManagerServer extends EventManagerImplBase {
 		}  
 		return newE;
 	}
-	private LinkedList readEventFromFile() {
-	    LinkedList values = new LinkedList<String>();
+	//Here we read the file and split data by each ",", then store each pieces into linkedlist
+	private LinkedList<String> readEventFromFile() {
+	    LinkedList<String> values = new LinkedList<String>();
 	    try {
 	        if (Files.exists(Paths.get(eventPath))) {
 	            BufferedReader reader = new BufferedReader(new FileReader(eventPath));
 	            String line = reader.readLine();
+	            //read the file until the next line is empty
 	            while (line != null && !line.isEmpty()) {
 	                String[] value = line.split(",");
 	                for (String v : value) {
@@ -133,23 +141,31 @@ public class EventManagerServer extends EventManagerImplBase {
 	    }
 	    return values;
 	}
+	
+	//add an event into the explored file, and check whether the new event ID
+	// is not duplicated to the existing data in the file
 	@Override
 	public void addEvent(Event request, StreamObserver<EventResponse> responseObserver) {
 		System.out.println("receiving new event request");
+		// if the file is not existing , create a new one
 		if(!Files.exists(Paths.get(eventPath))){
-			try{Files.createFile(Paths.get(eventPath));
-			
+			try{
+				Files.createFile(Paths.get(eventPath));
 			}
 			catch(IOException e){
 				e.printStackTrace();
 			}
 		}
+		//the linked list is invoke the readEventFromFile linkedlist
 		LinkedList<String>ata=readEventFromFile();
+		//the variable is invoke isDuplicate  boolean
         boolean isDuplicate = isDuplicate(request.getId(),ata);
+        //if the request is duplicated then return fail message
         if (isDuplicate) {
             String message = String.format("Event with ID %s already exists", request.getId());
             responseObserver.onNext(EventResponse.newBuilder().setSuccess(false).setMessage(message).build());
         }
+        // if it is not duplicate with existing file then return successful message,  and store it at the end of the file 
         else {		
         	try (BufferedWriter writer = new BufferedWriter(new FileWriter(eventPath,true))) {
         		String line =request.getId()+","+request.getName()+","+request.getDescription()+","+Long.toString(request.getDate());
@@ -164,6 +180,7 @@ public class EventManagerServer extends EventManagerImplBase {
         responseObserver.onCompleted();
         
 	}
+	//check a linkedlist data whether the request ID is not match with the content
 	private boolean isDuplicate(String id, LinkedList<String> data) {
 	    for (String d : data) {
 	        String[] values = d.split(",");
@@ -173,13 +190,14 @@ public class EventManagerServer extends EventManagerImplBase {
 	    }
 	    return false;
 	}
-
+	//Here we send a new record that we want to replace the relevant record by ID 
 	@Override
 	public StreamObserver<EventModificationRequest> modifyEvent(StreamObserver<EventResponse> responseObserver) {
 		   
 		return new StreamObserver<EventModificationRequest>() {
-
+			//the linked list is invoke the readEventFromFile linkedlist
 	        LinkedList<String> events = readEventFromFile();
+	        //the  linked list is to store the renew data
 	        LinkedList<String> newE;
   
 	        @Override
@@ -187,27 +205,33 @@ public class EventManagerServer extends EventManagerImplBase {
 	
 	            String eventId = request.getId();
 	            boolean found = false;
+	            //Here we iterate the events linkedlist and check whether the new record is duplicated with same ID
 	            for (int i = 0; i < events.size(); i++) {
 	                
 	                if (events.get(i).equals(eventId)) {
+	                	// once we found the record then merge the events into renew linkedlist
 	                	newE=mergeEvent(events);
+	                	//replace the old record to the new one
 	                	newE.set(i/4, request.getId()+","+request.getName()+","+request.getDescription()+","+Long.toString(request.getDate()));
 	                    found = true;
 	                    break;
 	                }
 	            }
+	            //if we find and renew the data,we write the data and renew the file
 	            if (found) {
 	                try (BufferedWriter writer = new BufferedWriter(new FileWriter(eventPath))) {
 	                    for (String event : newE) {
 	                        writer.write(event+"\n");
 	                    }
-	                    
+	                    //send the successful response
 	                    String message = String.format("Event with ID %s has been modified successfully", eventId);
 	                    responseObserver.onNext(EventResponse.newBuilder().setSuccess(true).setMessage(message).build());
 	                } catch (IOException e) {
 	                    e.printStackTrace();
 	                }
-	            } else {
+	            } 
+	            // if we not find the data, send the fail response
+	            else {
 	                String message = String.format("Event with ID %s not found", eventId);
 	                responseObserver.onNext(EventResponse.newBuilder().setSuccess(false).setMessage(message).build());
 	            }
@@ -225,23 +249,31 @@ public class EventManagerServer extends EventManagerImplBase {
 		        }
 		    };
 	}
-
+	//Here we accept a start time and an end time and then list the data that are in the period
 	@Override
 	public void listEvents(DateRange request, StreamObserver<Event> responseObserver) {
+		
+		//the variables store the request start time and end time
 	    long startTime = request.getStartDate();
 	    long endTime = request.getEndDate();
 	    
+		//the linked list is invoke the readEventFromFile linkedlist
 	    LinkedList <String>dat=new LinkedList<>();
 	    dat=readEventFromFile();
+	    
+	    //the linked list to store the records in certain period
 	    LinkedList <String> dd=new LinkedList<>();
+	    
+	    //Here we iterate the data  
 	    for(int i=3;i<dat.size();i+=4) {
-	    	
+	    	// if the data is in the period then store it into dd linkedlist
 	    	if(startTime<=Long.parseLong(dat.get(i))&&endTime>=Long.parseLong(dat.get(i))) {
 	    		dd.add(dat.get(i-3)+","+dat.get(i-2)+","+dat.get(i-1)+","+dat.get(i));
 	    	    responseObserver.onNext(Event.newBuilder().setId(dat.get(i-3)).setName(dat.get(i-2)).setDescription(dat.get(i-1)).setDate(Long.parseLong(dat.get(i))).build());
 
 	    	}
 	    }
+	    //if the datas are not matched, send fail response
 	    if(dd.isEmpty()) {
 	    	 responseObserver.onNext(Event.newBuilder().setId("not found").setName("not found").setDescription("not found").build());
 	    }

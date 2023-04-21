@@ -51,7 +51,6 @@ public class EventGUIApp {
 
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				try {
 					EventGUIApp window=new EventGUIApp();
 					window.frame.setVisible(true);
@@ -64,21 +63,24 @@ public class EventGUIApp {
 		});
 	}
 	public EventGUIApp() {
+		//create a jmdns instance for main3_service_type
 		discoverServices(main3_service_type);
 		
 		String host=smartInfo.getHostAddresses()[0];
 		int port=smartInfo.getPort();
-		
+		//build the channel to  channe3
 		ManagedChannel channel3=ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
+		//stubs -- generate from proto
 		emblockingStub=EventManagerGrpc.newBlockingStub(channel3);
 		emasyncStub=EventManagerGrpc.newStub(channel3);
-		
+		//start the GUI implementation	
 		initialize();
 	}
 
 private void discoverServices(String service_type) {
 		
 		try {
+			// Create a JmDNS instance
 			JmDNS jmdns =JmDNS.create(InetAddress.getLocalHost());
 			
 			jmdns.addServiceListener(service_type, new ServiceListener() {
@@ -114,7 +116,7 @@ private void discoverServices(String service_type) {
 				}
 				
 			});
-			
+			// Wait a bit
 			Thread.sleep(2000);
 			
 			jmdns.close();
@@ -187,12 +189,13 @@ private void discoverServices(String service_type) {
 		JPanel panel_service_5 =new JPanel();
 		frame.getContentPane().add(panel_service_5);
 		panel_service_5.setLayout(new FlowLayout(FlowLayout.LEFT,5,5));
-		
+		//this server will let user record an event 
 		JButton btnAddEvent=new JButton("Add a Event");
 		btnAddEvent.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//validate the request record date follow the certain date format
 				SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
 				format.setLenient(false);
 				
@@ -205,6 +208,7 @@ private void discoverServices(String service_type) {
 
 				catch (java.text.ParseException e1) {
 					e1.printStackTrace();
+					//if the date format is not match response fail message
 					textResponse.append("Invalid date!\n");
 				}
 				
@@ -226,7 +230,7 @@ private void discoverServices(String service_type) {
 		JPanel panel_service_6 =new JPanel();
 		frame.getContentPane().add(panel_service_6);
 		panel_service_6.setLayout(new FlowLayout(FlowLayout.LEFT,5,5));
-		
+		//this server will let user modify an event by ID
 		JButton btnModifyEvent=new JButton("Modify the Event by ID");
 		btnModifyEvent.addActionListener(new ActionListener() {
 
@@ -246,6 +250,7 @@ private void discoverServices(String service_type) {
 					};
 					StreamObserver<EventModificationRequest> requestObserver = emasyncStub.modifyEvent(responseObserver);
 					try {
+						//validate the request record date follow the certain date format
 						SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
 						format.setLenient(false);
 						Date date = format.parse(textNumber4.getText());
@@ -263,6 +268,7 @@ private void discoverServices(String service_type) {
 					} 
 					catch (java.text.ParseException e1) {
 						e1.printStackTrace();
+						//if the date format is not match response fail message
 						textResponse2.append("Invalid date!\n");
 					}
 				
@@ -302,13 +308,13 @@ private void discoverServices(String service_type) {
 		JPanel panel_service_9 =new JPanel();
 		frame.getContentPane().add(panel_service_9);
 		panel_service_9.setLayout(new FlowLayout(FlowLayout.LEFT,5,5));
-		
+		//this server will let user list the events with a given period
 		JButton btnListEvent=new JButton("List the Event in a period");
 		btnListEvent.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				//validate the request record date follow the certain date format
 				SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
 				format.setLenient(false);
 				
@@ -316,8 +322,8 @@ private void discoverServices(String service_type) {
 					Date date = format.parse(textNumber5.getText());
 					Date date2 = format.parse(textNumber6.getText());
 				} catch (java.text.ParseException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
+					//if the date format is not match response fail message
 					textResponse3.append("Invalid date!\n");
 				}
 				 

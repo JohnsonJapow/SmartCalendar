@@ -25,17 +25,23 @@ private static final Logger logger = Logger.getLogger(EventManagerServer.class.g
     
 	public static void main(String[] args){
 			
-			
+			//create the class instance
 			ScheduleOptimizerServer ScheduleOptimizerserver=new ScheduleOptimizerServer();
+			//get the properties for this service
 			Properties prop=ScheduleOptimizerserver.getProperties();
+			//register the service with JmDNS 
 			ScheduleOptimizerserver.registerService(prop);
-			
+			//invoke the port for this service from the properties file
 			int port=Integer.valueOf( prop.getProperty("service2_port") );
 
 			try {
+				//create a server on the port defined in variable "port"
+				//and attach a service "ScheduleOptimizerserver"
 				Server server;
 				server=ServerBuilder.forPort(port).addService(ScheduleOptimizerserver).build().start();
+				 // Giving a logging information on the server console that server has started
 				logger.info("Server started, listening on " + port);
+				// Server will be running until externally terminated.				
 				server.awaitTermination();
 			}
 			catch (InterruptedException | IOException e) {	
@@ -49,6 +55,7 @@ private static final Logger logger = Logger.getLogger(EventManagerServer.class.g
 		
 		try(InputStream input= new FileInputStream("src/main/resources/SpendingTracker.properties")) {
 			prop=new Properties();
+			//load a properties file
 			prop.load(input);
 			System.out.println("Schedule Optimizer properties...");
             System.out.println("\t service_type: " + prop.getProperty("service2_type"));
@@ -97,18 +104,27 @@ private static final Logger logger = Logger.getLogger(EventManagerServer.class.g
 	
 	@Override
 	public void setChallenge(Goal request, StreamObserver<GoalResponse> responseObserver) {
-		// TODO Auto-generated method stub
 		
 		System.out.println("receiving new event request");
 		try {
+			//read the file from spending tracker exported, this file have the current balance
+			//reader 1 will read the file when the method implemented
 			BufferedReader reader=new BufferedReader(new FileReader("data.txt"));
+			//reader 2 will read the file after the timer which set by user
 			BufferedReader reader2=new BufferedReader(new FileReader("data.txt"));
+			//read the content from the file and eliminate space
 			String firstBalance=reader.readLine().trim();
+			//the float store the original balance from file 
 			float oriB=Float.parseFloat(firstBalance);
+			//wait the certain time that set by user
 			Thread.sleep(request.getEndDate());
+			//read the content from the file and eliminate space
 			String endBalance=reader2.readLine().trim();
 			reader.close();
+			//the float store the final balance from file
 			float endB=Float.parseFloat(endBalance);
+			
+			//compare the result whether achieve the saving target
 			if(request.getIdealBalance()<=(endB-oriB)){
 				responseObserver.onNext(GoalResponse.newBuilder().setSuccess(true).setMessage(" : ) Good job !! You make it  !!").build());
 			}
